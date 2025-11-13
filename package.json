@@ -10,7 +10,8 @@
     "preact": "^10.5.15",
     "preact-render-to-string": "^6.5.13",
     "sockjs": "^0.3.21",
-    "ts-chacha20": "^1.2.0"
+    "ts-chacha20": "^1.2.0",
+    "ws": "^8.18.3"
   },
   "optionalDependencies": {
     "better-sqlite3": "^11.10.0",
