@@ -64,8 +64,32 @@ wss.on('connection', (ws) => {
                         }
                         // 3. CAMBIAR POKEMON
                         else if (req.forceSwitch) {
-                            stream.write('>p2 switch 2');
-                            console.log('🤖 CPU cambió pokemon');
+                            // Obtenemos la lista de Pokémon de la CPU
+                            const team = req.side.pokemon;
+                            let foundValidSwitch = false;
+
+                            // Iteramos sobre el equipo (índice 0-5)
+                            for (let i = 0; i < team.length; i++) {
+                                const pokemon = team[i];
+
+                                // Un switch es válido si NO está activo y NO está debilitado
+                                const isFainted = pokemon.condition.startsWith('0/');
+                                const isActive = pokemon.active;
+
+                                if (!isActive && !isFainted) {
+                                    // ¡Encontrado! Convertimos el índice (ej: 0) al slot (ej: 1)
+                                    const slot = i + 1;
+                                    stream.write(`>p2 switch ${slot}`);
+                                    console.log(`🤖 CPU cambió (forzado) al slot ${slot}`);
+                                    foundValidSwitch = true;
+                                    break; // Salimos del bucle
+                                }
+                            }
+
+                            if (!foundValidSwitch) {
+                                console.log('🤖 CPU no encontró a quién cambiar (partida terminada).');
+                            }
+
                         }
                     }
                 } catch (err) {
