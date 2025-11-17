@@ -73,8 +73,18 @@ wss.on('connection', (ws) => {
 
                             const team = req.side.pokemon;
                             let validSwitches = [];
+                            let activeIndex = -1;
 
                             console.log('🤖 CPU buscando switch forzado...');
+
+                            // Encontrar quién está activo
+                            for (let i = 0; i < team.length; i++) {
+                                const pokemon = team[i];
+                                if (pokemon && pokemon.active === true) {
+                                    activeIndex = i;
+                                    break;
+                                }
+                            }
 
                             // Recolectar TODOS los cambios válidos
                             for (let i = 0; i < team.length; i++) {
@@ -84,12 +94,11 @@ wss.on('connection', (ws) => {
                                 if (typeof pokemon.condition !== 'string') continue;
 
                                 const isFainted = pokemon.condition.startsWith('0/');
-                                const isActive = pokemon.active === true;
-                                const currentPokemon = i === 0 && !isActive; // El slot 0 es activo si no tiene active: true
+                                const isActive = (i === activeIndex);
 
                                 console.log(`🤖 Slot ${i + 1}: ${pokemon.ident || 'Unknown'}. Activo: ${isActive}, Debilitado: ${isFainted}, HP: ${pokemon.condition}`);
 
-                                // Agregar solo si está disponible y NO es debilitado
+                                // Agregar solo si está disponible y NO es debilitado y NO es activo
                                 if (!isFainted && !isActive) {
                                     validSwitches.push(i + 1);
                                 }
@@ -103,7 +112,7 @@ wss.on('connection', (ws) => {
                                 console.log(`✅ CPU cambió (forzado) al slot ${slot} de ${validSwitches.length} opciones válidas`);
                             } else {
                                 console.log('❌ CPU NO encontró a quién cambiar (¿todos muertos?).');
-                                stream.write('>p2 switch 1'); // Fallback seguro
+                                stream.write('>p2 switch 1');
                             }
                         }
 
