@@ -13,12 +13,12 @@ try {
     }
 }
 
-const PORT = 8080; 
+const PORT = 8080;
 const FORMAT = 'gen9customgame';
-const wss = new WebSocket.Server({ port: PORT });
+const wss = new WebSocket.Server({port: PORT});
 
 // Equipo de la CPU
-const CPU_TEAM = "Pikachu||lightball|static|thunderbolt,volttackle,ironlovetail,fakeout|Hardy|,252,,,4,252|||||]Charizard||lifeorb|blaze|flamethrower,hurricane,focusblast,roost|Timid|,4,,,252,252|||||";
+const CPU_TEAM = "|dragonite||noability|fuerzadraconica,llamadraconica,alacortante,rafagaceleste|bashful|||||100|]|mewtwo||noability|presionmental,pulsomental|bashful|||||100|]|zoroark||noability|golpesombrio,mareanegra|bashful|||||100|]|rayquaza||noability|fuerzadraconica,llamadraconica,alacortante,rafagaceleste|bashful|||||100|]|shayminsky||noability|golpehoja,rayofotosintetico,alacortante,rafagaceleste|bashful|||||100|]|blazikenmega||noability|golpeardiente,llamasolar,golpekarate,ondaki|bashful|||||100|";
 
 console.log(`🔥 Backend CUSTOM GAME (IA Mejorada) listo en puerto ${PORT}`);
 
@@ -29,7 +29,7 @@ wss.on('connection', (ws) => {
 
     (async () => {
         for await (const chunk of stream) {
-            ws.send(chunk); 
+            ws.send(chunk);
 
             // --- IA DEL JUGADOR 2 (CPU) ---
             // Detectamos mensajes dirigidos a P2
@@ -50,7 +50,7 @@ wss.on('connection', (ws) => {
                             const move = Math.floor(Math.random() * 4) + 1;
                             stream.write(`>p2 move ${move}`);
                             console.log(`🤖 CPU atacó con movimiento ${move}`);
-                        } 
+                        }
                         // 3. CAMBIAR POKEMON
                         else if (req.forceSwitch) {
                             stream.write('>p2 switch 2');
