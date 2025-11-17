@@ -93,7 +93,7 @@ wss.on('connection', (ws) => {
                                 if (!pokemon) continue;
                                 if (typeof pokemon.condition !== 'string') continue;
 
-                                const isFainted = pokemon.condition.startsWith('0/');
+                                const isFainted = pokemon.condition.startsWith('0');
                                 const isActive = (i === activeIndex);
 
                                 console.log(`🤖 Slot ${i + 1}: ${pokemon.ident || 'Unknown'}. Activo: ${isActive}, Debilitado: ${isFainted}, HP: ${pokemon.condition}`);
