@@ -67,37 +67,40 @@ wss.on('connection', (ws) => {
                             // VERIFICACIÓN DE SEGURIDAD
                             if (!req.side || !Array.isArray(req.side.pokemon)) {
                                 console.log('🤖 CPU ERROR: forceSwitch no trajo datos del equipo. Intentando switch 2.');
-                                stream.write('>p2 switch 2'); // Volver a la lógica tonta como último recurso
-                                continue; // Salir de este bloque 'try'
+                                stream.write('>p2 switch 2');
+                                continue;
                             }
 
                             const team = req.side.pokemon;
-                            let foundValidSwitch = false;
+                            let validSwitches = [];
 
                             console.log('🤖 CPU buscando switch forzado...');
 
+                            // Recolectar TODOS los cambios válidos
                             for (let i = 0; i < team.length; i++) {
                                 const pokemon = team[i];
 
-                                // Verificaciones de seguridad extra
                                 if (!pokemon) continue;
                                 if (typeof pokemon.condition !== 'string') continue;
 
                                 const isFainted = pokemon.condition.startsWith('0/');
-                                const isActive = pokemon.active === true; // Comprobar booleano exacto
+                                const isActive = pokemon.active === true;
 
-                                console.log(`🤖 Verificando slot ${i + 1}: ${pokemon.ident}. Activo: ${isActive}, Debilitado: ${isFainted}`);
+                                console.log(`🤖 Slot ${i + 1}: ${pokemon.ident || 'Unknown'}. Activo: ${isActive}, Debilitado: ${isFainted}`);
 
+                                // Agregar solo si está disponible y no es el actual
                                 if (!isActive && !isFainted) {
-                                    const slot = i + 1;
-                                    stream.write(`>p2 switch ${slot}`);
-                                    console.log(`✅ CPU cambió (forzado) al slot ${slot}`);
-                                    foundValidSwitch = true;
-                                    break;
+                                    validSwitches.push(i + 1);
                                 }
                             }
 
-                            if (!foundValidSwitch) {
+                            // Seleccionar un cambio aleatorio de los válidos
+                            if (validSwitches.length > 0) {
+                                const randomIndex = Math.floor(Math.random() * validSwitches.length);
+                                const slot = validSwitches[randomIndex];
+                                stream.write(`>p2 switch ${slot}`);
+                                console.log(`✅ CPU cambió (forzado) al slot ${slot} de ${validSwitches.length} opciones`);
+                            } else {
                                 console.log('❌ CPU NO encontró a quién cambiar (¿todos muertos?).');
                             }
                         }
