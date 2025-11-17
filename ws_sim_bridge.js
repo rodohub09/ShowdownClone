@@ -85,11 +85,12 @@ wss.on('connection', (ws) => {
 
                                 const isFainted = pokemon.condition.startsWith('0/');
                                 const isActive = pokemon.active === true;
+                                const currentPokemon = i === 0 && !isActive; // El slot 0 es activo si no tiene active: true
 
-                                console.log(`🤖 Slot ${i + 1}: ${pokemon.ident || 'Unknown'}. Activo: ${isActive}, Debilitado: ${isFainted}`);
+                                console.log(`🤖 Slot ${i + 1}: ${pokemon.ident || 'Unknown'}. Activo: ${isActive}, Debilitado: ${isFainted}, HP: ${pokemon.condition}`);
 
-                                // Agregar solo si está disponible y no es el actual
-                                if (!isActive && !isFainted) {
+                                // Agregar solo si está disponible y NO es debilitado
+                                if (!isFainted && !isActive) {
                                     validSwitches.push(i + 1);
                                 }
                             }
@@ -99,9 +100,10 @@ wss.on('connection', (ws) => {
                                 const randomIndex = Math.floor(Math.random() * validSwitches.length);
                                 const slot = validSwitches[randomIndex];
                                 stream.write(`>p2 switch ${slot}`);
-                                console.log(`✅ CPU cambió (forzado) al slot ${slot} de ${validSwitches.length} opciones`);
+                                console.log(`✅ CPU cambió (forzado) al slot ${slot} de ${validSwitches.length} opciones válidas`);
                             } else {
                                 console.log('❌ CPU NO encontró a quién cambiar (¿todos muertos?).');
+                                stream.write('>p2 switch 1'); // Fallback seguro
                             }
                         }
 
