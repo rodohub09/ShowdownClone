@@ -47,9 +47,20 @@ wss.on('connection', (ws) => {
                         }
                         // 2. ATACAR
                         else if (req.active) {
-                            const move = Math.floor(Math.random() * 4) + 1;
+                            let moveCount = 4;
+
+                            if (Array.isArray(req.active) && req.active[0] && Array.isArray(req.active[0].moves)) {
+                                moveCount = req.active[0].moves.length;
+                            }
+
+                            if (moveCount === 0) {
+                                moveCount = 1;
+                            }
+
+                            const move = Math.floor(Math.random() * moveCount) + 1;
+
                             stream.write(`>p2 move ${move}`);
-                            console.log(`🤖 CPU atacó con movimiento ${move}`);
+                            console.log(`🤖 CPU (con ${moveCount} movs) atacó con ${move}`);
                         }
                         // 3. CAMBIAR POKEMON
                         else if (req.forceSwitch) {
