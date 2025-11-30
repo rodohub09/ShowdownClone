@@ -18,14 +18,15 @@ const FORMAT = 'gen9customgame';
 const wss = new WebSocket.Server({port: PORT});
 
 // Equipo de la CPU
-const CPU_TEAM = null;
-const CPU_RIVAL = null;
 console.log(`🔥 Backend CUSTOM GAME (IA Mejorada) listo en puerto ${PORT}`);
 
 wss.on('connection', (ws) => {
     console.log('📱 Cliente conectado.');
     const stream = new BattleStream();
     let battleStarted = false;
+    let CPU_RIVAL= null;
+    let CPU_TEAM = null;
+    let userTeam = null;
 
     (async () => {
         for await (const chunk of stream) {
@@ -133,7 +134,7 @@ wss.on('connection', (ws) => {
         }
         else if (msg.startsWith('LOGIN|')) {
             if (battleStarted) return;
-            const userTeam = msg.replace('LOGIN|', '');
+            userTeam = msg.replace('LOGIN|', '');
             console.log("⚔️ Batalla iniciada.");
             stream.write(`>start {"formatid":"${FORMAT}"}`);
             stream.write(`>player p1 {"name":"Entrenador", "team":"${userTeam}"}`);
