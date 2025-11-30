@@ -18,8 +18,8 @@ const FORMAT = 'gen9customgame';
 const wss = new WebSocket.Server({port: PORT});
 
 // Equipo de la CPU
-const CPU_TEAM = "|dragonite||noability|fuerzadraconica,llamadraconica,alacortante,rafagaceleste|bashful|||||100|]|mewtwo||noability|presionmental,pulsomental|bashful|||||100|]|zoroark||noability|golpesombrio,mareanegra|bashful|||||100|]|rayquaza||noability|fuerzadraconica,llamadraconica,alacortante,rafagaceleste|bashful|||||100|]|shayminsky||noability|golpehoja,rayofotosintetico,alacortante,rafagaceleste|bashful|||||100|]|blazikenmega||noability|golpeardiente,llamasolar,golpekarate,ondaki|bashful|||||100|";
-
+const CPU_TEAM = null;
+const CPU_RIVAL = null;
 console.log(`🔥 Backend CUSTOM GAME (IA Mejorada) listo en puerto ${PORT}`);
 
 wss.on('connection', (ws) => {
@@ -126,13 +126,18 @@ wss.on('connection', (ws) => {
 
     ws.on('message', (message) => {
         const msg = message.toString();
-        if (msg.startsWith('LOGIN|')) {
+        if(msg.startsWith('CPU-')){
+            const parts = msg.split('-');
+            CPU_TEAM = parts[2];
+            CPU_RIVAL = parts[1];
+        }
+        else if (msg.startsWith('LOGIN|')) {
             if (battleStarted) return;
             const userTeam = msg.replace('LOGIN|', '');
             console.log("⚔️ Batalla iniciada.");
             stream.write(`>start {"formatid":"${FORMAT}"}`);
             stream.write(`>player p1 {"name":"Entrenador", "team":"${userTeam}"}`);
-            stream.write(`>player p2 {"name":"RivalCPU", "team":"${CPU_TEAM}"}`);
+            stream.write(`>player p2 {"name":"${CPU_RIVAL}", "team":"${CPU_TEAM}"}`);
             battleStarted = true;
         } else {
             stream.write(msg);
