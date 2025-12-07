@@ -342,7 +342,7 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		target: "normal",
 		type: "Normal",
 	},
-	energiaoneutra: {
+	energianeutra: {
 		accuracy: true,
 		basePower: 75,
 		category: "Special",
